@@ -52,15 +52,15 @@ def search_supplier_info(supplier_name, comune):
         return "Errore nella ricerca"
 
 def call_api(description, attivita_svolta, info_fornitore):
-    url = "http://143.198.98.88/v1/chat-messages"
+    url = "http://143.198.98.88/v1/workflows/run"
     headers = {
-        "Authorization": "Bearer app-nyABMEXuDbSHGLbc9yxTF4z5",
+        "Authorization": "Bearer app-bA9yQYs2jvExJQLl5nDFVwZP",
         "Content-Type": "application/json"
     }
     payload = {
         "user": "ContAI",
-        "query": f"Descrizioni linee fattura:\n{description}",
         "inputs": {
+            "descrizione": f"Descrizioni linee fattura:\n{description}",
             "attivita_svolta": attivita_svolta,
             "info_fornitore": info_fornitore
         },
@@ -82,8 +82,9 @@ def extract_conti_possibili(api_response):
     logger.info(f"Risposta API ricevuta: {api_response}")
 
     try:
-        if 'answer' in api_response:
-            answer = json.loads(api_response['answer'])
+        if 'data' in api_response:
+            data = api_response['data']
+            answer = json.loads(data['outputs']['output'])
             return answer.get('conti_possibili', [])
         else:
             logger.warning("Chiave 'answer' non trovata nella risposta API")
